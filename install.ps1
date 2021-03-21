@@ -17,6 +17,10 @@ ForEach ($Dir in $DirList) {
     }
 }
 
+# Editar init.vim
+(Get-Content "$PSScriptRoot/init.vim").Replace("~/.config", "$env:LOCALAPPDATA") | Set-Content "$PSScriptRoot/init.vim"  
+(Get-Content "$PSScriptRoot/init.vim").Replace("/", "\") | Set-Content "$PSScriptRoot/init.vim"
+
 # Copiar configuracion
 New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/general.vim" -Target "$env:LOCALAPPDATA/nvim/general/general.vim"
 New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/mappings.vim" -Target "$env:LOCALAPPDATA/nvim/keys/mappings.vim"
