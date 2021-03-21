@@ -44,7 +44,7 @@ then
   python -m pip install --user --upgrade pynvim
 elif [ "$DISTRO" == "fedora" ];
 then
-  if dnf list installed | grep -qv nodejs > /dev/null;
+  if [ -z "$(dnf list installed 'nodejs')" ] > /dev/null;
   then
     	sudo dnf install nodejs -y
   fi
