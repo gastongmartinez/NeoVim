@@ -1,5 +1,5 @@
 # Instalar vim-plug
-if (Not (Test-Path -Path "$env:LOCALAPPDATA/nvim-data/site/autoload/plug.vim" -PathType Leaf)) {
+if (-Not (Test-Path -Path "$env:LOCALAPPDATA/nvim-data/site/autoload/plug.vim" -PathType Leaf)) {
     Invoke-WebRequest -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
         New-Item "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
 }
@@ -12,7 +12,7 @@ $DirList = @(
 )
 ForEach ($Dir in $DirList) {
     $Dir = $Dir.TrimEnd()
-    if (Not (Test-Path -Path $Dir -PathType Container)) {
+    if (-Not (Test-Path -Path $Dir -PathType Container)) {
         New-Item -Path $Dir -ItemType Directory
     }
 }
@@ -22,15 +22,16 @@ ForEach ($Dir in $DirList) {
 (Get-Content "$PSScriptRoot/init.vim").Replace("/", "\") | Set-Content "$PSScriptRoot/init.vim"
 
 # Copiar configuracion
-New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/general.vim" -Target "$env:LOCALAPPDATA/nvim/general/general.vim"
-New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/mappings.vim" -Target "$env:LOCALAPPDATA/nvim/keys/mappings.vim"
-New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/plugins.vim" -Target "$env:LOCALAPPDATA/nvim/vim-plug/plugins.vim"
-New-Item -ItemType SymbolicLink -Path "$PSScriptRoot/init.vim" -Target "$env:LOCALAPPDATA/nvim/init.vim"
+New-Item -ErrorAction Ignore -ItemType SymbolicLink -Path "$env:LOCALAPPDATA/nvim/general/general.vim" -Target "$PSScriptRoot/general.vim"
+New-Item -ErrorAction Ignore -ItemType SymbolicLink -Path "$env:LOCALAPPDATA/nvim/keys/mappings.vim" -Target "$PSScriptRoot/mappings.vim"
+New-Item -ErrorAction Ignore -ItemType SymbolicLink -Path "$env:LOCALAPPDATA/nvim/vim-plug/plugins.vim" -Target "$PSScriptRoot/plugins.vim"
+New-Item -ErrorAction Ignore -ItemType SymbolicLink -Path "$env:LOCALAPPDATA/nvim/init.vim" -Target "$PSScriptRoot/init.vim"
 
 # Instalar Plugins
 nvim -c "PlugInstall" -c "qall"
 
 # Instalar Dependencias
+python.exe -m pip install --upgrade pip
 pip install pynvim
 npm install -g neovim
 
