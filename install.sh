@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+if cat /etc/*-release | grep -q Arch > /dev/null;
+then
+  DISTRO="arch"
+fi
+if cat /etc/*-release | grep -q fedoraproject > /dev/null;
+then
+  DISTRO="fedora"
+fi
+
 # Instalar vim-plug
 if [ ! -f ~/.config/nvim/autoload/plug.vim ];
 then
@@ -22,15 +31,25 @@ ln -sf "$PWD"/init.vim ~/.config/nvim/init.vim
 nvim -c "PlugInstall" -c "qall"
 
 # Componentes adicionales
-if [ -z "$(pacman -Qs python-pip)" ] > /dev/null ;
+if [ "$DISTRO" == "arch" ];
 then
-  sudo pacman -S python-pip --noconfirm --needed
-fi
-if [ -z "$(pacman -Qs npm)" ] > /dev/null ;
+  if [ -z "$(pacman -Qs python-pip)" ] > /dev/null ;
+  then
+    sudo pacman -S python-pip --noconfirm --needed
+  fi
+  if [ -z "$(pacman -Qs npm)" ] > /dev/null ;
+  then
+    sudo pacman -S npm --noconfirm --needed
+  fi
+  python -m pip install --user --upgrade pynvim
+elif [ "$DISTRO" == "fedora" ];
 then
-  sudo pacman -S npm --noconfirm --needed
+  if dnf list installed | grep -qv nodejs > /dev/null;
+  then
+    	sudo dnf install nodejs -y
+  fi
+  pip install pynvim
 fi
-python -m pip install --user --upgrade pynvim
 sudo npm install -g neovim
 
 # Instalacion de extensiones
