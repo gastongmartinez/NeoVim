@@ -8,6 +8,10 @@ if cat /etc/*-release | grep -q fedoraproject > /dev/null;
 then
   DISTRO="fedora"
 fi
+if cat /etc/*-release | grep -q FreeBSD > /dev/null;
+then
+  DISTRO="freebsd"
+fi
 
 # Instalar vim-plug
 if [ ! -f ~/.config/nvim/autoload/plug.vim ];
@@ -49,7 +53,12 @@ then
     	sudo dnf install nodejs -y
   fi
   pip install pynvim
+elif [ "$DISTRO" == "freebsd" ];
+then
+  sudo pkg install -y node14 npm-node14 py37-pip
+  pip install pynvim
 fi
+
 sudo npm install -g neovim
 
 # Instalacion de extensiones
